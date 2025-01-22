@@ -80,12 +80,10 @@ test.describe('Extension Tests', () => {
   test('should have configurable settings', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
-    // Vérifier les paramètres via l'API storage de l'extension
+    // Récupérer les paramètres via le script de background
     const settings = await page.evaluate(() => {
-      return browser.storage.local.get({
-        webhookUrl: '',
-        targetLanguage: '',
-        autoTranslate: false
+      return new Promise((resolve) => {
+        browser.runtime.sendMessage({ action: "getConfig" }, resolve);
       });
     });
     
