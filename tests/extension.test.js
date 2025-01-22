@@ -181,7 +181,8 @@ test.describe('Extension Tests', () => {
     
     const originalText = await page.textContent('#dynamic-text');
     
-    await page.click('text=Change Text');
+    // Cliquer sur le bouton avec le texte traduit ou original
+    await page.click('button:has-text("Change Text"), button:has-text("Changer le texte")');
     await page.waitForTimeout(1000);
     
     const newText = await page.textContent('#dynamic-text');
