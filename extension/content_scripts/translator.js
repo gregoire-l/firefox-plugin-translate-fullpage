@@ -89,6 +89,7 @@ class PageTranslator {
   }
 
   markTextNodes(element) {
+    const nodes = [];
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT,
@@ -96,23 +97,24 @@ class PageTranslator {
       false
     );
 
+    // First collect all text nodes
     let node;
-    let counter = 0;
     while (node = walker.nextNode()) {
-      if (node.textContent.trim().length > 0) {
-        // Skip if parent is script or style
-        if (node.parentElement.tagName === 'SCRIPT' || 
-            node.parentElement.tagName === 'STYLE') {
-          continue;
-        }
-
-        // Create a span wrapper with a unique ID
-        const wrapper = document.createElement('span');
-        wrapper.setAttribute('data-translate-id', `t${counter}`);
-        wrapper.textContent = node.textContent;
-        node.parentNode.replaceChild(wrapper, node);
-        counter++;
+      if (node.textContent.trim().length > 0 && 
+          node.parentElement.tagName !== 'SCRIPT' && 
+          node.parentElement.tagName !== 'STYLE') {
+        nodes.push(node);
       }
+    }
+
+    // Then process them after collection
+    let counter = 0;
+    for (const node of nodes) {
+      const wrapper = document.createElement('span');
+      wrapper.setAttribute('data-translate-id', `t${counter}`);
+      wrapper.textContent = node.textContent;
+      node.parentNode.replaceChild(wrapper, node);
+      counter++;
     }
     console.log('Nombre de text nodes marqués:', counter);
   }
