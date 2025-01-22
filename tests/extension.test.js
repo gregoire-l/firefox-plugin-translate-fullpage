@@ -113,33 +113,40 @@ test.describe('Extension Tests', () => {
   test('should translate page content', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
-    // Configurer le webhook via le système de messages
+    // Configurer le webhook via le système de messages avec structure JSON complète
     await page.evaluate((url) => {
-      window.postMessage({ 
+      window.postMessage({
         action: 'setConfig',
         config: {
           webhookUrl: url,
-          targetLanguage: 'fr',
-          autoTranslate: false
+          targetLanguage: 'fr', 
+          autoTranslate: false,
+          _timestamp: Date.now() // Force le rechargement
         }
       }, '*');
     }, process.env.WEBHOOK_URL);
 
-    // Attendre que la configuration soit appliquée
-    await page.waitForTimeout(1000);
+    // Attendre la confirmation de la configuration
+    await page.waitForFunction(() => {
+      return document.documentElement.getAttribute('data-translator-loaded') === 'true';
+    }, { timeout: 5000 });
 
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
     const originalTitle = await page.textContent('#main-title');
     const originalSimpleText = await page.textContent('#simple-text');
     
-    // Déclencher la traduction via le système de messages
+    // Déclencher la traduction et vérifier le processus complet
     await page.evaluate(() => {
       window.postMessage({ action: 'translate' }, '*');
     });
-    // Attendre que la traduction soit terminée
+    
+    // Attendre d'abord l'apparition des marqueurs de traduction
+    await page.waitForSelector('[data-translate-id]', { timeout: 5000 });
+    
+    // Puis attendre leur disparition
     await page.waitForFunction(() => {
       return document.querySelectorAll('[data-translate-id]').length === 0;
-    }, { timeout: 5000 });
+    }, { timeout: 10000 });
     
     // Ajouter des vérifications intermédiaires
     const remainingMarkers = await page.evaluate(() => {
