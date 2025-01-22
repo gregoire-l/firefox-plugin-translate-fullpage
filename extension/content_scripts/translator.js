@@ -15,6 +15,8 @@ class PageTranslator {
               config: response
             }, '*');
           });
+      } else if (event.data.action === 'translate') {
+        translator.translatePage();
       }
     });
     

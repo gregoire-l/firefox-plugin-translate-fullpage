@@ -109,11 +109,14 @@ test.describe('Extension Tests', () => {
     const originalTitle = await page.textContent('#main-title');
     const originalSimpleText = await page.textContent('#simple-text');
     
-    // Déclencher la traduction via l'API de l'extension
+    // Déclencher la traduction via le système de messages
     await page.evaluate(() => {
-      const translator = new window.PageTranslator();
-      return translator.translatePage();
+      window.postMessage({ action: 'translate' }, '*');
     });
+    // Attendre que la traduction soit terminée
+    await page.waitForFunction(() => {
+      return document.querySelectorAll('[data-translate-id]').length === 0;
+    }, { timeout: 5000 });
     
     await page.waitForTimeout(2000);
     
