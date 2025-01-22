@@ -67,12 +67,12 @@ test.describe('Extension Tests', () => {
   test('should load extension properly', async () => {
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
     
-    // Vérifier que l'extension est chargée en vérifiant la présence du bouton dans la barre d'outils
-    // On peut le faire en vérifiant si le script de l'extension a été injecté
-    const hasTranslator = await page.evaluate(() => {
-      return typeof window.PageTranslator !== 'undefined';
+    // Verify extension is loaded by checking for DOM marker
+    await page.waitForSelector('[data-translator-loaded="true"]');
+    const isLoaded = await page.evaluate(() => {
+      return document.documentElement.hasAttribute('data-translator-loaded');
     });
-    expect(hasTranslator).toBeTruthy();
+    expect(isLoaded).toBeTruthy();
     
     extensionLoaded = true;
   });

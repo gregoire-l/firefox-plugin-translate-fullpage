@@ -2,6 +2,8 @@ class PageTranslator {
   constructor() {
     this.translationInProgress = false;
     this.config = null;
+    // Add DOM marker for testing
+    document.documentElement.setAttribute('data-translator-loaded', 'true');
     this.init();
   }
 
