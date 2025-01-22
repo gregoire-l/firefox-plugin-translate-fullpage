@@ -179,24 +179,25 @@ test.describe('Extension Tests', () => {
   test('should translate dynamic content', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
+    // Vérifier le texte original
     const originalText = await page.textContent('#dynamic-text');
+    expect(originalText).toMatch(/will be changed/i);
     
-    // Cliquer sur le bouton avec le texte traduit ou original
-    await page.click('button:has-text("Change Text"), button:has-text("Changer le texte")');
-    await page.waitForTimeout(1000);
+    // Cliquer sur le bouton avec un sélecteur plus robuste
+    const button = page.locator('button:has-text("Change Text"), button:has-text("Changer le texte")');
+    await button.waitFor({ state: 'visible' });
+    await button.click();
     
+    // Attendre le changement dynamique
+    await expect(page.locator('#dynamic-text')).toContainText('changed dynamically!', { timeout: 5000 });
     const newText = await page.textContent('#dynamic-text');
-    expect(newText).not.toBe(originalText);
     
-    // Déclencher la traduction via l'API de l'extension
-    await page.evaluate(() => {
-      const translator = new window.PageTranslator();
-      return translator.translatePage();
-    });
+    // Déclencher la traduction et attendre son application
+    await page.evaluate(() => new window.PageTranslator().translatePage());
+    await page.waitForSelector('#dynamic-text:has-text("modifié")', { timeout: 10000 });
     
-    await page.waitForTimeout(2000);
-    
+    // Vérifier la traduction française
     const translatedText = await page.textContent('#dynamic-text');
-    expect(translatedText).not.toBe(newText);
+    expect(translatedText).toMatch(/modifié dynamiquement/i);
   });
 }); 
