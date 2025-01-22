@@ -5,14 +5,16 @@ class PageTranslator {
     // Add DOM marker for testing
     document.documentElement.setAttribute('data-translator-loaded', 'true');
     
-    // Setup message bridge for testing
-    window.addEventListener('message', async (event) => {
+    // Setup message bridge between page and extension
+    window.addEventListener('message', (event) => {
       if (event.data.action === 'getConfig') {
-        const response = await browser.runtime.sendMessage({ action: "getConfig" });
-        window.postMessage({ 
-          type: 'configResponse', 
-          config: response 
-        }, '*');
+        browser.runtime.sendMessage({ action: "getConfig" })
+          .then(response => {
+            window.postMessage({
+              type: 'configResponse',
+              config: response
+            }, '*');
+          });
       }
     });
     
