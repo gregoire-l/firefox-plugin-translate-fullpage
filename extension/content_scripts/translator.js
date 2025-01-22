@@ -50,15 +50,12 @@ class PageTranslator {
     console.log('Starting translation with config:', JSON.stringify(this.config, null, 2));
 
     try {
-      // 1. Clone the body to avoid modifying the original during preparation
-      const bodyClone = document.body.cloneNode(true);
-      console.log('Clone avant marquage:\n', bodyClone.outerHTML);
-      
-      // 2. Add translation markers to text nodes
-      this.markTextNodes(bodyClone);
-      console.log('Clone après marquage:\n', bodyClone.outerHTML);
+      // 1. Mark text nodes directly in the live DOM
+      console.log('DOM before marking:\n', document.documentElement.outerHTML);
+      this.markTextNodes(document.body);
+      console.log('DOM after marking:\n', document.documentElement.outerHTML);
 
-      // 3. Send to webhook
+      // 2. Send marked HTML to webhook
       const response = await fetch(this.config.webhookUrl, {
         method: 'POST',
         headers: {
@@ -66,7 +63,7 @@ class PageTranslator {
         },
         body: JSON.stringify({
           language: this.config.targetLanguage,
-          content: bodyClone.innerHTML
+          content: document.body.innerHTML
         })
       });
 
@@ -138,8 +135,8 @@ class PageTranslator {
         originalSpan.innerHTML = span.innerHTML;
         originalSpan.textContent = span.textContent;
         
-        // Conserver le data-translate-id pour vérification
-        // originalSpan.removeAttribute('data-translate-id');
+        // Remove translation marker after applying translation
+        originalSpan.removeAttribute('data-translate-id');
       }
     });
   }
