@@ -113,25 +113,20 @@ test.describe('Extension Tests', () => {
   test('should translate page content', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
-    // Configurer le webhook via le stockage de l'extension
-    const backgroundPage = await context.backgroundPage();
-    
-    // Attendre que la page background soit prête
-    await backgroundPage.waitForLoadState();
-    
-    // Configurer le webhook avec l'URL fournie
-    await backgroundPage.evaluate(async (url) => {
-      await browser.storage.local.clear();
-      await browser.storage.local.set({
-        webhookUrl: url,
-        targetLanguage: 'fr',
-        autoTranslate: false
-      });
-      console.log('Configuration sauvegardée:', await browser.storage.local.get());
+    // Configurer le webhook via le système de messages
+    await page.evaluate((url) => {
+      window.postMessage({ 
+        action: 'setConfig',
+        config: {
+          webhookUrl: url,
+          targetLanguage: 'fr',
+          autoTranslate: false
+        }
+      }, '*');
     }, process.env.WEBHOOK_URL);
 
-    // Recharger la page de test pour appliquer la config
-    await page.reload();
+    // Attendre que la configuration soit appliquée
+    await page.waitForTimeout(1000);
 
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
     const originalTitle = await page.textContent('#main-title');

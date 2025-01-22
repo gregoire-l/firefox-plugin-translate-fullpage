@@ -18,7 +18,11 @@ class PageTranslator {
       } else if (event.data.action === 'translate') {
         translator.translatePage();
       } else if (event.data.action === 'setConfig') {
-        translator.config = { ...translator.config, ...event.data.config };
+        // Sauvegarder dans le storage et mettre à jour la config
+        browser.storage.local.set(event.data.config).then(() => {
+          translator.config = { ...translator.config, ...event.data.config };
+          console.log('Nouvelle configuration:', translator.config);
+        });
       }
     });
     
