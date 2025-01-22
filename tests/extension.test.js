@@ -153,7 +153,7 @@ test.describe('Extension Tests', () => {
         text: document.querySelector('#simple-text').innerHTML
       };
     });
-    console.log('Contenu après traduction:', translatedContent);
+    console.log('Contenu après traduction:', JSON.stringify(translatedContent, null, 2));
     
     await page.waitForTimeout(2000);
     

@@ -21,7 +21,7 @@ class PageTranslator {
         // Sauvegarder dans le storage et mettre à jour la config
         browser.storage.local.set(event.data.config).then(() => {
           translator.config = { ...translator.config, ...event.data.config };
-          console.log('Nouvelle configuration:', translator.config);
+          console.log('Nouvelle configuration:', JSON.stringify(translator.config, null, 2));
         });
       }
     });
