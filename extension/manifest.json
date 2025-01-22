@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "Full Page Translator",
+  "version": "1.0",
+  "description": "Translate web pages using external AI service",
+  "permissions": [
+    "<all_urls>",
+    "storage",
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/translate-48.png"
+    },
+    "default_title": "Translate Page",
+    "default_popup": "popup/options.html"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_scripts/translator.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+T"
+      },
+      "description": "Translate current page"
+    }
+  }
+} 

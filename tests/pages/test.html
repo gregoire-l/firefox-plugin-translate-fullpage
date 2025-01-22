@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page for Translation</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .article { margin-bottom: 30px; }
+        .dynamic-content { color: blue; }
+    </style>
+</head>
+<body>
+    <h1 id="main-title">Welcome to the Test Page</h1>
+    
+    <div class="article">
+        <h2>Simple Text</h2>
+        <p id="simple-text">This is a simple paragraph that should be translated.</p>
+    </div>
+
+    <div class="article">
+        <h2>Complex HTML</h2>
+        <p id="complex-html">This text has <strong>bold</strong> and <em>italic</em> elements that should be preserved.</p>
+    </div>
+
+    <div class="article">
+        <h2>Lists</h2>
+        <ul id="test-list">
+            <li>First item to translate</li>
+            <li>Second item with <a href="#">link</a></li>
+            <li>Third item</li>
+        </ul>
+    </div>
+
+    <div class="article">
+        <h2>Dynamic Content</h2>
+        <p id="dynamic-text" class="dynamic-content">This text will be changed dynamically</p>
+        <button onclick="changeText()">Change Text</button>
+    </div>
+
+    <script>
+        function changeText() {
+            document.getElementById('dynamic-text').textContent = 'This text was changed dynamically!';
+        }
+    </script>
+</body>
+</html> 

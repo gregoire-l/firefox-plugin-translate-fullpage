@@ -1,0 +1,19 @@
+{
+  "name": "firefox-plugin-translate-fullpage",
+  "version": "1.0.0",
+  "description": "Firefox extension to translate web pages using AI",
+  "scripts": {
+    "test": "playwright test",
+    "dev": "web-ext run --source-dir extension",
+    "build": "web-ext build --source-dir extension",
+    "lint": "web-ext lint --source-dir extension"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.41.1",
+    "playwright": "^1.41.1",
+    "playwright-webextext": "^0.0.4"
+  },
+  "dependencies": {
+    "web-ext": "^8.3.0"
+  }
+}
