@@ -55,7 +55,11 @@ test.describe('Extension Tests', () => {
     context = await browser.newContext();
     
     // Afficher les logs de la console du navigateur
-    context.on('console', msg => console.log('[Browser Console]', msg.text()));
+    context.on('console', msg => {
+      const text = msg.text();
+      const type = msg.type();
+      console.log(`[Browser ${type.toUpperCase()}] ${text}`);
+    });
     
     page = await context.newPage();
   });

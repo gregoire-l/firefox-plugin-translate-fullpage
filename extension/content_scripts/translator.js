@@ -61,16 +61,18 @@ class PageTranslator {
 
       // 4. Get translated content and apply it
       const responseData = await response.json();
-      console.log('Webhook response:', responseData);
+      console.log('Webhook response:', JSON.stringify(responseData, null, 2));
       if (!responseData.text) {
-        throw new Error('Invalid response format from webhook');
+        const errMsg = `Invalid response format from webhook: ${JSON.stringify(responseData)}`;
+        console.error(errMsg);
+        throw new Error(errMsg);
       }
-      console.log('Applying translation...');
+      console.log('Applying translation to', responseData.text.length, 'characters...');
       this.applyTranslation(responseData.text);
-      console.log('Translation applied');
+      console.log('Translation completed successfully');
 
     } catch (error) {
-      console.error('Translation error:', error);
+      console.error('Translation error:', error.message, '\nStack:', error.stack);
     } finally {
       this.translationInProgress = false;
     }
