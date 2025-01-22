@@ -115,17 +115,23 @@ test.describe('Extension Tests', () => {
     
     // Configurer le webhook via le stockage de l'extension
     const backgroundPage = await context.backgroundPage();
-    await backgroundPage.evaluate(async (config) => {
-      await browser.storage.local.set(config);
-      console.log('Configuration set:', config);
-      const currentConfig = await browser.storage.local.get();
-      console.log('Current configuration:', currentConfig);
-      await browser.runtime.reload();
-    }, {
-      webhookUrl: process.env.WEBHOOK_URL,
-      targetLanguage: 'fr', 
-      autoTranslate: false
-    });
+    
+    // Attendre que la page background soit prête
+    await backgroundPage.waitForLoadState();
+    
+    // Configurer le webhook avec l'URL fournie
+    await backgroundPage.evaluate(async (url) => {
+      await browser.storage.local.clear();
+      await browser.storage.local.set({
+        webhookUrl: url,
+        targetLanguage: 'fr',
+        autoTranslate: false
+      });
+      console.log('Configuration sauvegardée:', await browser.storage.local.get());
+    }, process.env.WEBHOOK_URL);
+
+    // Recharger la page de test pour appliquer la config
+    await page.reload();
 
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
     const originalTitle = await page.textContent('#main-title');

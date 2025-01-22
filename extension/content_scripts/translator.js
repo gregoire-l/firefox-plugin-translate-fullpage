@@ -41,6 +41,7 @@ class PageTranslator {
   async translatePage() {
     if (this.translationInProgress) return;
     this.translationInProgress = true;
+    console.log('Starting translation with config:', this.config);
 
     try {
       // 1. Clone the body to avoid modifying the original during preparation
