@@ -117,7 +117,10 @@ test.describe('Extension Tests', () => {
     const backgroundPage = await context.backgroundPage();
     await backgroundPage.evaluate(async (config) => {
       await browser.storage.local.set(config);
-      await browser.runtime.reload(); // Recharger la config
+      console.log('Configuration set:', config);
+      const currentConfig = await browser.storage.local.get();
+      console.log('Current configuration:', currentConfig);
+      await browser.runtime.reload();
     }, {
       webhookUrl: process.env.WEBHOOK_URL,
       targetLanguage: 'fr', 
