@@ -53,6 +53,10 @@ test.describe('Extension Tests', () => {
     const browserTypeWithExtension = withExtension(firefox, EXTENSION_PATH);
     browser = await browserTypeWithExtension.launch({ headless: false });
     context = await browser.newContext();
+    
+    // Afficher les logs de la console du navigateur
+    context.on('console', msg => console.log('[Browser Console]', msg.text()));
+    
     page = await context.newPage();
   });
 
