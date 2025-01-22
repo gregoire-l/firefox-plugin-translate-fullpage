@@ -125,16 +125,15 @@ test.describe('Extension Tests', () => {
   test('should translate page content', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
-    // Configurer le webhook de test
-    await page.evaluate(() => {
-      window.postMessage({ 
-        action: 'setConfig',
-        config: {
-          webhookUrl: 'http://localhost:3333/mock-translate',
-          targetLanguage: 'fr',
-          autoTranslate: false
-        }
-      }, '*');
+    // Configurer le webhook via le stockage de l'extension
+    const backgroundPage = await context.backgroundPage();
+    await backgroundPage.evaluate(async (config) => {
+      await browser.storage.local.set(config);
+      await browser.runtime.reload(); // Recharger la config
+    }, {
+      webhookUrl: process.env.WEBHOOK_URL,
+      targetLanguage: 'fr', 
+      autoTranslate: false
     });
 
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
