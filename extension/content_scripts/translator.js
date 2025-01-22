@@ -134,12 +134,9 @@ class PageTranslator {
           translated: span.outerHTML
         });
         
-        // Remplacer le contenu tout en conservant la balise originale
-        originalSpan.innerHTML = span.innerHTML;
-        originalSpan.textContent = span.textContent;
-        
-        // Remove translation marker after applying translation
-        originalSpan.removeAttribute('data-translate-id');
+        // Remplacer le span par le texte traduit directement
+        const translatedText = document.createTextNode(span.textContent);
+        originalSpan.parentNode.replaceChild(translatedText, originalSpan);
       }
     });
   }
