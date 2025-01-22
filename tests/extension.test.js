@@ -118,6 +118,20 @@ test.describe('Extension Tests', () => {
       return document.querySelectorAll('[data-translate-id]').length === 0;
     }, { timeout: 5000 });
     
+    // Ajouter des vérifications intermédiaires
+    const remainingMarkers = await page.evaluate(() => {
+      return document.querySelectorAll('[data-translate-id]').length;
+    });
+    console.log(`Marqueurs restants: ${remainingMarkers}`);
+    
+    const translatedContent = await page.evaluate(() => {
+      return {
+        title: document.querySelector('#main-title').innerHTML,
+        text: document.querySelector('#simple-text').innerHTML
+      };
+    });
+    console.log('Contenu après traduction:', translatedContent);
+    
     await page.waitForTimeout(2000);
     
     const translatedTitle = await page.textContent('#main-title');

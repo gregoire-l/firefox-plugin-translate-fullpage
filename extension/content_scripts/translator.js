@@ -61,10 +61,13 @@ class PageTranslator {
 
       // 4. Get translated content and apply it
       const responseData = await response.json();
+      console.log('Webhook response:', responseData);
       if (!responseData.text) {
         throw new Error('Invalid response format from webhook');
       }
+      console.log('Applying translation...');
       this.applyTranslation(responseData.text);
+      console.log('Translation applied');
 
     } catch (error) {
       console.error('Translation error:', error);
