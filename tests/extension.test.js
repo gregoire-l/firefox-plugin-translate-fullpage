@@ -145,11 +145,7 @@ test.describe('Extension Tests', () => {
       return document.querySelectorAll('[data-translate-id]').length === 0;
     }, { timeout: 15000 });
     
-    // Vérifier le texte traduit spécifique
-    // Vérifications progressives
-    await expect(page.locator('[data-translate-id]').first()).toBeVisible();
-    console.log('Marqueurs visibles - début traduction');
-    
+    // Vérifier directement le résultat traduit
     await expect(page.locator('#main-title')).toContainText('Bienvenue', { timeout: 15000 });
     await expect(page.locator('#simple-text')).toContainText('paragraphe simple');
     
