@@ -45,14 +45,18 @@ class PageTranslator {
   async translatePage() {
     if (this.translationInProgress) return;
     this.translationInProgress = true;
+    
+    console.log('DOM original:\n', document.documentElement.outerHTML);
     console.log('Starting translation with config:', JSON.stringify(this.config, null, 2));
 
     try {
       // 1. Clone the body to avoid modifying the original during preparation
       const bodyClone = document.body.cloneNode(true);
+      console.log('Clone avant marquage:\n', bodyClone.outerHTML);
       
       // 2. Add translation markers to text nodes
       this.markTextNodes(bodyClone);
+      console.log('Clone après marquage:\n', bodyClone.outerHTML);
 
       // 3. Send to webhook
       const response = await fetch(this.config.webhookUrl, {
@@ -75,7 +79,9 @@ class PageTranslator {
         throw new Error(errMsg);
       }
       console.log('Applying translation to', responseData.text.length, 'characters...');
+      console.log('Réponse webhook reçue:\n', responseData.text);
       this.applyTranslation(responseData.text);
+      console.log('DOM après application traduction:\n', document.documentElement.outerHTML);
       console.log('Translation completed successfully');
 
     } catch (error) {
@@ -123,10 +129,17 @@ class PageTranslator {
     translatedSpans.forEach(span => {
       const originalSpan = document.querySelector(`[data-translate-id="${span.getAttribute('data-translate-id')}"]`);
       if (originalSpan) {
-        // Replace entire content including HTML structure
-        originalSpan.outerHTML = span.outerHTML;
-        // Remove the marker after translation
-        originalSpan.removeAttribute('data-translate-id');
+        console.log('Remplacement élément:', {
+          original: originalSpan.outerHTML,
+          translated: span.outerHTML
+        });
+        
+        // Remplacer le contenu tout en conservant la balise originale
+        originalSpan.innerHTML = span.innerHTML;
+        originalSpan.textContent = span.textContent;
+        
+        // Conserver le data-translate-id pour vérification
+        // originalSpan.removeAttribute('data-translate-id');
       }
     });
   }

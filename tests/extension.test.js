@@ -146,14 +146,16 @@ test.describe('Extension Tests', () => {
     }, { timeout: 15000 });
     
     // Vérifier le texte traduit spécifique
-    await page.waitForFunction(
-      () => document.querySelector('#main-title').textContent.includes('Bienvenue'),
-      { timeout: 10000 }
-    );
-    await page.waitForFunction(
-      () => document.querySelector('#simple-text').textContent.includes('paragraphe simple'),
-      { timeout: 10000 }
-    );
+    // Vérifications progressives
+    await expect(page.locator('[data-translate-id]').first()).toBeVisible();
+    console.log('Marqueurs visibles - début traduction');
+    
+    await expect(page.locator('#main-title')).toContainText('Bienvenue', { timeout: 15000 });
+    await expect(page.locator('#simple-text')).toContainText('paragraphe simple');
+    
+    // Vérifier la conservation des structures
+    await expect(page.locator('#complex-html strong')).toBeVisible();
+    await expect(page.locator('#test-list li')).toHaveCount(3);
     
     // Ajouter des vérifications intermédiaires
     const remainingMarkers = await page.evaluate(() => {
