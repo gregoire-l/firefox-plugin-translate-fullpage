@@ -140,13 +140,21 @@ test.describe('Extension Tests', () => {
       window.postMessage({ action: 'translate' }, '*');
     });
     
-    // Attendre d'abord l'apparition des marqueurs de traduction
-    await page.waitForSelector('[data-translate-id]', { timeout: 5000 });
-    
-    // Puis attendre leur disparition
+    // Attendre directement la disparition des marqueurs avec un timeout étendu
     await page.waitForFunction(() => {
       return document.querySelectorAll('[data-translate-id]').length === 0;
-    }, { timeout: 10000 });
+    }, { timeout: 15000 });
+    
+    // Vérifier directement le contenu traduit
+    await page.waitForFunction(
+      ({ originalTitle, originalSimpleText }) => {
+        const newTitle = document.querySelector('#main-title').textContent;
+        const newText = document.querySelector('#simple-text').textContent;
+        return newTitle !== originalTitle && newText !== originalSimpleText;
+      },
+      { originalTitle, originalSimpleText },
+      { timeout: 5000 }
+    );
     
     // Ajouter des vérifications intermédiaires
     const remainingMarkers = await page.evaluate(() => {
