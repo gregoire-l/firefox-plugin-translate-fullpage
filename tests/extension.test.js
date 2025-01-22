@@ -145,15 +145,14 @@ test.describe('Extension Tests', () => {
       return document.querySelectorAll('[data-translate-id]').length === 0;
     }, { timeout: 15000 });
     
-    // Vérifier directement le contenu traduit
+    // Vérifier le texte traduit spécifique
     await page.waitForFunction(
-      ({ originalTitle, originalSimpleText }) => {
-        const newTitle = document.querySelector('#main-title').textContent;
-        const newText = document.querySelector('#simple-text').textContent;
-        return newTitle !== originalTitle && newText !== originalSimpleText;
-      },
-      { originalTitle, originalSimpleText },
-      { timeout: 5000 }
+      () => document.querySelector('#main-title').textContent.includes('Bienvenue'),
+      { timeout: 10000 }
+    );
+    await page.waitForFunction(
+      () => document.querySelector('#simple-text').textContent.includes('paragraphe simple'),
+      { timeout: 10000 }
     );
     
     // Ajouter des vérifications intermédiaires

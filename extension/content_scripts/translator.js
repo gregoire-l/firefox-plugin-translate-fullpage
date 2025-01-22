@@ -123,7 +123,8 @@ class PageTranslator {
     translatedSpans.forEach(span => {
       const originalSpan = document.querySelector(`[data-translate-id="${span.getAttribute('data-translate-id')}"]`);
       if (originalSpan) {
-        originalSpan.textContent = span.textContent;
+        // Replace entire content including HTML structure
+        originalSpan.outerHTML = span.outerHTML;
         // Remove the marker after translation
         originalSpan.removeAttribute('data-translate-id');
       }
