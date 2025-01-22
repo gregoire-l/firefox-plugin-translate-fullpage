@@ -114,6 +114,7 @@ class PageTranslator {
         counter++;
       }
     }
+    console.log('Nombre de text nodes marqués:', counter);
   }
 
   applyTranslation(translatedHtml) {
