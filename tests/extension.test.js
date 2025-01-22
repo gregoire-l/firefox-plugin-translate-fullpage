@@ -80,10 +80,16 @@ test.describe('Extension Tests', () => {
   test('should have configurable settings', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
-    // Récupérer les paramètres via le script de background
+    // Récupérer les paramètres via le content script
     const settings = await page.evaluate(() => {
       return new Promise((resolve) => {
-        browser.runtime.sendMessage({ action: "getConfig" }, resolve);
+        window.postMessage({ action: 'getConfig' }, '*');
+        window.addEventListener('message', function handler(event) {
+          if (event.data.type === 'configResponse') {
+            window.removeEventListener('message', handler);
+            resolve(event.data.config);
+          }
+        });
       });
     });
     

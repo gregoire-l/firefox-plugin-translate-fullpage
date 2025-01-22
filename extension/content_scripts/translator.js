@@ -4,6 +4,18 @@ class PageTranslator {
     this.config = null;
     // Add DOM marker for testing
     document.documentElement.setAttribute('data-translator-loaded', 'true');
+    
+    // Setup message bridge for testing
+    window.addEventListener('message', async (event) => {
+      if (event.data.action === 'getConfig') {
+        const response = await browser.runtime.sendMessage({ action: "getConfig" });
+        window.postMessage({ 
+          type: 'configResponse', 
+          config: response 
+        }, '*');
+      }
+    });
+    
     this.init();
   }
 
