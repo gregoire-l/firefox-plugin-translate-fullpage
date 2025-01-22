@@ -19,7 +19,19 @@ const EXTENSION_PATH = path.join(process.cwd(), 'extension');
 function startServer() {
   return new Promise((resolve) => {
     server = http.createServer((req, res) => {
-      if (req.url === '/test.html') {
+      if (req.url === '/mock-translate') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+          const requestData = JSON.parse(body);
+          const translatedContent = requestData.content
+            .replace(/Welcome/g, 'Bienvenue')
+            .replace(/simple paragraph/g, 'paragraphe simple');
+          
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ text: translatedContent }));
+        });
+      } else if (req.url === '/test.html') {
         fs.readFile(path.join(__dirname, 'pages', 'test.html'), (err, data) => {
           if (err) {
             res.writeHead(500);
@@ -113,6 +125,18 @@ test.describe('Extension Tests', () => {
   test('should translate page content', async () => {
     test.skip(!extensionLoaded, 'Extension not loaded, skipping remaining tests');
     
+    // Configurer le webhook de test
+    await page.evaluate(() => {
+      window.postMessage({ 
+        action: 'setConfig',
+        config: {
+          webhookUrl: 'http://localhost:3333/mock-translate',
+          targetLanguage: 'fr',
+          autoTranslate: false
+        }
+      }, '*');
+    });
+
     await page.goto(`http://localhost:${TEST_PORT}/test.html`);
     const originalTitle = await page.textContent('#main-title');
     const originalSimpleText = await page.textContent('#simple-text');
