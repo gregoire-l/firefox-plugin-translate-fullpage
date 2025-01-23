@@ -155,6 +155,8 @@ class PageTranslator {
     }
 
     // Appliquer les traductions
+    Object.entries(responseData.content).forEach(([id, translatedText]) => {
+      const element = document.querySelector(`[data-translate-id="${id}"]`);
       if (element) {
         element.textContent = translatedText;
         console.log('Texte traduit appliqué pour', id, ':', translatedText);
