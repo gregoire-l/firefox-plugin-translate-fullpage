@@ -35,7 +35,7 @@ class PageTranslator {
       webhookUrl: '',
       autoTranslate: false,
       targetLanguage: navigator.language,
-      isDev: false // Nouveau paramètre
+      isDev: true // Nouveau paramètre
     });
     
     this.isDev = this.config.isDev;
