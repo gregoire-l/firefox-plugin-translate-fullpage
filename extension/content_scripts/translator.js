@@ -73,7 +73,7 @@ class PageTranslator {
         },
         body: JSON.stringify({
           language: this.config.targetLanguage,
-          content: document.body.innerHTML
+          content: this.collectTranslationContent()
         })
       });
 
@@ -139,13 +139,24 @@ class PageTranslator {
     console.log('Nombre de text nodes marqués:', counter);
   }
 
-  applyTranslation(translatedHtml) {
-    // Create a temporary container
-    const temp = document.createElement('div');
-    temp.innerHTML = translatedHtml;
+  collectTranslationContent() {
+    const content = {};
+    const elements = document.querySelectorAll('[data-translate-id]');
+    elements.forEach(el => {
+      content[el.getAttribute('data-translate-id')] = el.textContent;
+    });
+    return content;
+  }
 
-    // Find all translated spans and apply translations
-    const translatedSpans = temp.querySelectorAll('[data-translate-id]');
+  applyTranslation(responseData) {
+    // Vérifier la structure de la réponse
+    if (!responseData.content) {
+      throw new Error('Invalid response format: missing content property');
+    }
+
+    // Appliquer les traductions
+    Object.entries(responseData.content).forEach(([id, translatedText]) => {
+      const element = document.querySelector(`[data-translate-id="${id}"]`);
     translatedSpans.forEach(span => {
       const originalSpan = document.querySelector(`[data-translate-id="${span.getAttribute('data-translate-id')}"]`);
       if (originalSpan) {
