@@ -1,15 +1,27 @@
-// Clic gauche : déclencher la traduction
-browser.browserAction.onClicked.addListener(async (tab) => {
+// Listen for toolbar button clicks
+browser.browserAction.onClicked.addListener( (tab) => {
+  console.log('Browser action clicked for tab:', tab.id);
+  
+  // Inject the content script if not already injected
   try {
-    await browser.tabs.executeScript(tab.id, {
+    console.log('Attempting to inject content script...');
+     browser.tabs.executeScript(tab.id, {
       file: "/content_scripts/translator.js"
     });
+    console.log('Content script injected successfully');
     
-    await browser.tabs.sendMessage(tab.id, {
+    // Send message to trigger translation
+    console.log('Sending translate message to content script...');
+     browser.tabs.sendMessage(tab.id, {
       action: "translate"
     });
+    console.log('Translation message sent successfully');
   } catch (error) {
-    console.error("Error injecting script:", error);
+    console.error("Error in browser action handler:", error);
+    console.error("Error details:", {
+      message: error.message,
+      stack: error.stack
+    });
   }
 });
 
