@@ -34,8 +34,11 @@ class PageTranslator {
     this.config = await browser.storage.local.get({
       webhookUrl: '',
       autoTranslate: false,
-      targetLanguage: navigator.language
+      targetLanguage: navigator.language,
+      isDev: false // Nouveau paramètre
     });
+    
+    this.isDev = this.config.isDev;
 
     if (this.config.autoTranslate) {
       this.translatePage();
@@ -55,7 +58,14 @@ class PageTranslator {
       this.markTextNodes(document.body);
       console.log('DOM after marking:\n', document.documentElement.outerHTML);
 
-      // 2. Send marked HTML to webhook
+      if (this.isDev) {
+        // Mode dev: Appliquer le style rouge directement
+        this.applyDevStyle();
+        console.log('Mode dev - Texte marqué en rouge');
+        return;
+      }
+
+      // Mode production: Appel webhook normal
       const response = await fetch(this.config.webhookUrl, {
         method: 'POST',
         headers: {
@@ -86,6 +96,16 @@ class PageTranslator {
     } finally {
       this.translationInProgress = false;
     }
+  }
+
+  applyDevStyle() {
+    // Appliquer le style rouge à tous les éléments marqués
+    const markedElements = document.querySelectorAll('[data-translate-id]');
+    markedElements.forEach(el => {
+      el.style.color = 'red';
+      el.style.backgroundColor = '#fff0f0';
+      el.style.border = '1px solid #ffcccc';
+    });
   }
 
   markTextNodes(element) {
