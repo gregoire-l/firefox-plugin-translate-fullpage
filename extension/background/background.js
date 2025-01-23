@@ -1,17 +1,24 @@
-// Listen for toolbar button clicks
-browser.browserAction.onClicked.addListener(async (tab) => {
-  // Inject the content script if not already injected
-  try {
-    await browser.tabs.executeScript(tab.id, {
-      file: "/content_scripts/translator.js"
-    });
-    
-    // Send message to trigger translation
-    await browser.tabs.sendMessage(tab.id, {
-      action: "translate"
-    });
-  } catch (error) {
-    console.error("Error injecting script:", error);
+// Create context menu item
+browser.contextMenus.create({
+  id: "translate-page",
+  title: "Translate Page",
+  contexts: ["browser_action"]
+});
+
+// Listen for context menu clicks
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === "translate-page") {
+    try {
+      await browser.tabs.executeScript(tab.id, {
+        file: "/content_scripts/translator.js"
+      });
+      
+      await browser.tabs.sendMessage(tab.id, {
+        action: "translate"
+      });
+    } catch (error) {
+      console.error("Error injecting script:", error);
+    }
   }
 });
 

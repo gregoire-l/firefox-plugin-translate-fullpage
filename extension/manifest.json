@@ -6,7 +6,8 @@
   "permissions": [
     "<all_urls>",
     "storage",
-    "activeTab"
+    "activeTab",
+    "contextMenus"
   ],
   "browser_action": {
     "default_icon": {
