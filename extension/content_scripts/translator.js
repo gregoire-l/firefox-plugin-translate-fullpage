@@ -35,7 +35,7 @@ class PageTranslator {
       webhookUrl: '',
       autoTranslate: false,
       targetLanguage: navigator.language,
-      isDev: true // Nouveau paramètre
+      isDev: false // Nouveau paramètre
     });
     
     this.isDev = this.config.isDev;
@@ -80,14 +80,13 @@ class PageTranslator {
       // 4. Get translated content and apply it
       const responseData = await response.json();
       console.log('Webhook response:', JSON.stringify(responseData, null, 2));
-      if (!responseData.text) {
+      if (!responseData.body) {
         const errMsg = `Invalid response format from webhook: ${JSON.stringify(responseData)}`;
         console.error(errMsg);
         throw new Error(errMsg);
       }
-      console.log('Applying translation to', responseData.text.length, 'characters...');
-      console.log('Réponse webhook reçue:\n', responseData.text);
-      this.applyTranslation(responseData.text);
+      console.log('Applying translation...');
+      this.applyTranslation(responseData);
       console.log('DOM après application traduction:\n', document.documentElement.outerHTML);
       console.log('Translation completed successfully');
 
@@ -150,12 +149,12 @@ class PageTranslator {
 
   applyTranslation(responseData) {
     // Vérifier la structure de la réponse
-    if (!responseData.content) {
-      throw new Error('Invalid response format: missing content property');
+    if (!responseData.body) {
+      throw new Error('Invalid response format: missing body property');
     }
 
     // Appliquer les traductions
-    Object.entries(responseData.content).forEach(([id, translatedText]) => {
+    Object.entries(responseData.body).forEach(([id, translatedText]) => {
       const element = document.querySelector(`[data-translate-id="${id}"]`);
       if (element) {
         element.textContent = translatedText;

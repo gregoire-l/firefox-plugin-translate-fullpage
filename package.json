@@ -4,7 +4,7 @@
   "description": "Firefox extension to translate web pages using AI",
   "scripts": {
     "test": "playwright test",
-    "dev": "web-ext run --verbose --firefox=/usr/bin/firefox --firefox-profile=firefox-profile --source-dir extension --start-url http://localhost:3333/test.html --pref extensions.webextensions.keepUuidOnUninstall=true --pref extensions.webextensions.keepProfileChanges=true",
+    "dev": "npx http-server tests/pages -p 3333 & web-ext run  -p ./firefox-profile --source-dir extension --start-url http://localhost:3333/test.html --keep-profile-changes",
     "build": "web-ext build --source-dir extension",
     "lint": "web-ext lint --source-dir extension"
   },
