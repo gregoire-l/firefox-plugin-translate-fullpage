@@ -155,20 +155,21 @@ class PageTranslator {
     }
 
     // Appliquer les traductions
-    Object.entries(responseData.content).forEach(([id, translatedText]) => {
-      const element = document.querySelector(`[data-translate-id="${id}"]`);
-    translatedSpans.forEach(span => {
-      const originalSpan = document.querySelector(`[data-translate-id="${span.getAttribute('data-translate-id')}"]`);
-      if (originalSpan) {
-        console.log('Remplacement élément:', {
-          original: originalSpan.outerHTML,
-          translated: span.outerHTML
-        });
+      if (element) {
+        element.textContent = translatedText;
+        console.log('Texte traduit appliqué pour', id, ':', translatedText);
         
-        // Remplacer le span par le texte traduit directement
-        const translatedText = document.createTextNode(span.textContent);
-        originalSpan.parentNode.replaceChild(translatedText, originalSpan);
+        // Remplacer le span par le texte directement
+        const textNode = document.createTextNode(translatedText);
+        element.parentNode.replaceChild(textNode, element);
+      } else {
+        console.warn('Élément non trouvé pour ID:', id);
       }
+    });
+
+    // Nettoyer les IDs après traduction
+    document.querySelectorAll('[data-translate-id]').forEach(el => {
+      el.removeAttribute('data-translate-id');
     });
   }
 }
