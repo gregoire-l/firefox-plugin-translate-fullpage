@@ -1,24 +1,28 @@
-// Create context menu item
+// Clic gauche : déclencher la traduction
+browser.browserAction.onClicked.addListener(async (tab) => {
+  try {
+    await browser.tabs.executeScript(tab.id, {
+      file: "/content_scripts/translator.js"
+    });
+    
+    await browser.tabs.sendMessage(tab.id, {
+      action: "translate"
+    });
+  } catch (error) {
+    console.error("Error injecting script:", error);
+  }
+});
+
+// Clic droit : menu contextuel pour options
 browser.contextMenus.create({
-  id: "translate-page",
-  title: "Translate Page",
+  id: "open-options",
+  title: "Options",
   contexts: ["browser_action"]
 });
 
-// Listen for context menu clicks
-browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === "translate-page") {
-    try {
-      await browser.tabs.executeScript(tab.id, {
-        file: "/content_scripts/translator.js"
-      });
-      
-      await browser.tabs.sendMessage(tab.id, {
-        action: "translate"
-      });
-    } catch (error) {
-      console.error("Error injecting script:", error);
-    }
+browser.contextMenus.onClicked.addListener((info) => {
+  if (info.menuItemId === "open-options") {
+    browser.runtime.openOptionsPage();
   }
 });
 
