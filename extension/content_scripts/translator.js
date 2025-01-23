@@ -143,4 +143,11 @@ class PageTranslator {
 }
 
 // Initialize translator
-const translator = new PageTranslator(); 
+const translator = new PageTranslator();
+
+// Add listener for runtime messages
+browser.runtime.onMessage.addListener((message) => {
+  if (message.action === 'translate') {
+    translator.translatePage();
+  }
+});
